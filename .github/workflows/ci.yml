@@ -39,9 +39,10 @@ jobs:
         with:
           node-version: '16'  # Adjust according to your project's Node.js version
 
-      - name: Fetch PR branch
+      - name: Pull PR branch
         run: |
-          git fetch origin ${{ github.head_ref }}
+          git branch 
+          git pull origin ${{ github.head_ref }}
 
       - name: Try merging PR branch
         run: |
