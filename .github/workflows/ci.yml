@@ -42,11 +42,11 @@ jobs:
       - name: Pull PR branch
         run: |
           git branch 
-          git pull origin ${{ github.head_ref }}
-
-      - name: Try merging PR branch
-        run: |
+          git pull origin 
+          git checkout  ${{ github.base_ref }}
+          
           git merge --no-commit --no-ff ${{ github.head_ref }} || echo "Merge conflicts detected. Please resolve them."
+     
 
       - name: Install dependencies
         run: npm install
