@@ -1,0 +1,54 @@
+name: Validate PR
+
+on:
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Adjust according to your project's Node.js version
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build TypeScript app
+        run: npm run build
+
+  check_merge_conflicts:
+    runs-on: ubuntu-latest
+    needs: validate  # This ensures 'check_merge_conflicts' runs after 'validate'
+
+    steps:
+      - name: Checkout target branch
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.base_ref }}  # Use the base branch of the PR
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'  # Adjust according to your project's Node.js version
+
+      - name: Fetch PR branch
+        run: |
+          git fetch origin ${{ github.head_ref }}
+
+      - name: Try merging PR branch
+        run: |
+          git merge --no-commit --no-ff ${{ github.head_ref }} || echo "Merge conflicts detected. Please resolve them."
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build TypeScript app
+        run: npm run build
